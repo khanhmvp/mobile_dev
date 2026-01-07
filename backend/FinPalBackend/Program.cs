@@ -5,17 +5,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// --- BẮT ĐẦU ĐOẠN CẤU HÌNH DATABASE ---
-// 1. Lấy chuỗi kết nối từ appsettings.json
+// --- 1. CẤU HÌNH CORS (Cho phép Web/Chrome gọi vào) ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // Chấp nhận mọi nguồn (localhost, web, mobile...)
+              .AllowAnyMethod()  // Chấp nhận mọi phương thức (GET, POST...)
+              .AllowAnyHeader(); // Chấp nhận mọi Header
+    });
+});
+// -----------------------------------------------------
+
+// --- CẤU HÌNH DATABASE ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. Đăng ký AppDbContext sử dụng SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
-// --- KẾT THÚC ĐOẠN CẤU HÌNH DATABASE ---
+// -------------------------
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -28,7 +37,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// --- QUAN TRỌNG: TẠM KHÓA DÒNG NÀY ---
+// app.UseHttpsRedirection(); 
+// Lý do: Để tránh việc Server tự động chuyển từ HTTP (5259) sang HTTPS (7055) gây lỗi bảo mật trên Chrome
+// -------------------------------------
+
+// --- 2. BẬT CORS (Phải đặt TRƯỚC UseAuthorization) ---
+app.UseCors("AllowAll");
+// -----------------------------------------------------
 
 app.UseAuthorization();
 

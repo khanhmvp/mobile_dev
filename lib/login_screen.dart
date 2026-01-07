@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'forgot_password_screen.dart';
+// Đảm bảo các file này đã tồn tại trong dự án của bạn
+import '../services/auth_service.dart';
+import 'forgot_password_screen.dart'; // Nếu chưa có file này thì comment dòng này lại
 import 'home_screen.dart';
+import 'bank_link_screen.dart'; // Nếu bạn tách file thì import, nếu để chung thì không cần
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,32 +13,103 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isLogin = true;
+  bool isLogin = true; // Trạng thái: true = Đăng nhập, false = Đăng ký
+  bool isLoading = false; // Trạng thái loading khi gọi API
 
-  // Hàm xử lý khi nhấn nút chính
-  void _handleMainButton() {
+  // Khai báo các Controller để lấy dữ liệu nhập vào
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+  final TextEditingController _nameController =
+      TextEditingController(); // Chỉ dùng khi Đăng ký
+  final TextEditingController _confirmPassController = TextEditingController();
+
+  // Giải phóng bộ nhớ khi thoát màn hình
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _passController.dispose();
+    _nameController.dispose();
+    _confirmPassController.dispose();
+    super.dispose();
+  }
+
+  // --- HÀM XỬ LÝ CHÍNH (GỌI API) ---
+  void _handleMainButton() async {
+    // 1. Lấy dữ liệu và xóa khoảng trắng thừa
+    String phone = _phoneController.text.trim();
+    String password = _passController.text.trim();
+    String name = _nameController.text.trim();
+
+    // 2. Kiểm tra dữ liệu rỗng
+    if (phone.isEmpty || password.isEmpty) {
+      _showSnackBar('Vui lòng nhập đầy đủ thông tin!', Colors.red);
+      return;
+    }
+
+    if (!isLogin) {
+      // Logic riêng cho Đăng ký
+      if (name.isEmpty) {
+        _showSnackBar('Vui lòng nhập Họ và tên!', Colors.red);
+        return;
+      }
+      if (password != _confirmPassController.text.trim()) {
+        _showSnackBar('Mật khẩu xác nhận không khớp!', Colors.red);
+        return;
+      }
+    }
+
+    // 3. Bắt đầu gọi API -> Bật loading
+    setState(() => isLoading = true);
+
     if (isLogin) {
-      // 1. Logic chuyển sang màn hình Liên kết ngân hàng (Screen 24)
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const BankLinkScreen()),
-      );
-    } else {
-      // Logic xử lý Đăng ký
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Đăng ký tài khoản thành công!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      // --- XỬ LÝ ĐĂNG NHẬP ---
+      var user = await AuthService.login(phone, password);
 
-      Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() => isLoading = false); // Tắt loading
+
+      if (user != null) {
+        // Thành công -> Chuyển sang màn hình Liên kết ngân hàng
+        print("Đăng nhập thành công: ${user['fullName']}");
+
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const BankLinkScreen()),
+          );
+        }
+      } else {
+        _showSnackBar('Sai số điện thoại hoặc mật khẩu!', Colors.red);
+      }
+    } else {
+      // --- XỬ LÝ ĐĂNG KÝ ---
+      bool success = await AuthService.register(name, phone, password);
+
+      setState(() => isLoading = false); // Tắt loading
+
+      if (success) {
+        _showSnackBar('Đăng ký thành công! Hãy đăng nhập.', Colors.green);
+
+        // Chuyển tab về Đăng nhập và tự điền SĐT, xóa mật khẩu cũ
         setState(() {
           isLogin = true;
+          _passController.clear();
+          _confirmPassController.clear();
         });
-      });
+      } else {
+        _showSnackBar('Đăng ký thất bại (SĐT có thể đã tồn tại).', Colors.red);
+      }
     }
+  }
+
+  // Hàm hiển thị thông báo (SnackBar)
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -48,7 +122,16 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              Image.asset('assets/images/money_icon.png', height: 150),
+              // Logo
+              Image.asset(
+                'assets/images/money_icon.png',
+                height: 100,
+                errorBuilder: (c, o, s) => const Icon(
+                  Icons.account_balance_wallet,
+                  size: 80,
+                  color: Color(0xFF4285F4),
+                ),
+              ),
               const SizedBox(height: 16),
               const Text(
                 'Finpal',
@@ -64,15 +147,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
               const SizedBox(height: 30),
+
+              // Tabs (Đăng nhập / Đăng ký)
               _buildTabs(),
+
               const SizedBox(height: 24),
+
+              // Form nhập liệu
               if (isLogin) ..._loginForm() else ..._registerForm(),
+
               const SizedBox(height: 32),
+
+              // Nút bấm chính
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: _handleMainButton,
+                  onPressed: isLoading ? null : _handleMainButton,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4285F4),
                     elevation: 0,
@@ -80,14 +171,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    isLogin ? 'Đăng nhập' : 'Đăng ký',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          isLogin ? 'Đăng nhập' : 'Đăng ký',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -138,10 +238,10 @@ class _LoginScreenState extends State<LoginScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: active
                 ? [
-                    BoxShadow(
+                    const BoxShadow(
                       color: Colors.black12,
                       blurRadius: 4,
-                      offset: const Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ]
                 : [],
@@ -160,14 +260,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _loginForm() {
     return [
-      _inputField(label: 'Số điện thoại'),
+      _inputField(label: 'Số điện thoại', controller: _phoneController),
       const SizedBox(height: 16),
-      _inputField(label: 'Mật khẩu', obscureText: true),
+      _inputField(
+        label: 'Mật khẩu',
+        obscureText: true,
+        controller: _passController,
+      ),
       const SizedBox(height: 12),
       Align(
         alignment: Alignment.center,
         child: TextButton(
           onPressed: () {
+            // Đảm bảo bạn có file forgot_password_screen.dart hoặc comment lại
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
@@ -187,15 +292,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _registerForm() {
     return [
-      _inputField(label: 'Số điện thoại'),
+      _inputField(label: 'Họ và tên', controller: _nameController),
       const SizedBox(height: 16),
-      _inputField(label: 'Mật khẩu', obscureText: true),
+      _inputField(label: 'Số điện thoại', controller: _phoneController),
       const SizedBox(height: 16),
-      _inputField(label: 'Xác nhận mật khẩu', obscureText: true),
+      _inputField(
+        label: 'Mật khẩu',
+        obscureText: true,
+        controller: _passController,
+      ),
+      const SizedBox(height: 16),
+      _inputField(
+        label: 'Xác nhận mật khẩu',
+        obscureText: true,
+        controller: _confirmPassController,
+      ),
     ];
   }
 
-  Widget _inputField({required String label, bool obscureText = false}) {
+  Widget _inputField({
+    required String label,
+    bool obscureText = false,
+    required TextEditingController controller,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -205,6 +324,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
@@ -224,9 +344,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// ================= MÀN HÌNH LIÊN KẾT NGÂN HÀNG (SCREEN 24) =================
-// ================= MÀN HÌNH LIÊN KẾT NGÂN HÀNG (SCREEN 24) =================
-// Lưu ý: Đảm bảo bạn đã import 'home_screen.dart'; ở đầu file login_screen.dart
+// ================= MÀN HÌNH LIÊN KẾT NGÂN HÀNG =================
+// (Bạn có thể để chung trong file này hoặc tách ra file bank_link_screen.dart tùy ý)
 
 class BankLinkScreen extends StatefulWidget {
   const BankLinkScreen({super.key});
@@ -238,12 +357,12 @@ class BankLinkScreen extends StatefulWidget {
 class _BankLinkScreenState extends State<BankLinkScreen> {
   String? _selectedBank;
 
-  // Hàm điều hướng dứt điểm sang Home
+  // Hàm chuyển sang màn hình chính
   void _goToHome(BuildContext context) {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const HomeScreen()),
-      (route) => false, // Xóa sạch lịch sử để không thể quay lại Login
+      (route) => false, // Xóa lịch sử để không quay lại Login được
     );
   }
 
@@ -251,7 +370,7 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
     setState(() {
       _selectedBank = bankName;
     });
-    print("Đã chọn ngân hàng: $bankName");
+    // Có thể gọi API lưu ngân hàng ở đây nếu cần
   }
 
   @override
@@ -301,7 +420,7 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () => _goToHome(context), // Sửa ở đây
+                  onPressed: () => _goToHome(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4285F4),
                     shape: RoundedRectangleBorder(
@@ -322,9 +441,7 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
               SizedBox(
                 width: double.infinity,
                 child: TextButton(
-                  onPressed: () => _goToHome(
-                    context,
-                  ), // Sửa ở đây: Từ Navigator.pop thành _goToHome
+                  onPressed: () => _goToHome(context),
                   child: const Text(
                     'Để sau',
                     style: TextStyle(color: Colors.grey),
@@ -342,11 +459,9 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
   Widget _buildBankItem(String name, IconData icon, Color color) {
     final isSelected = _selectedBank == name;
     return MouseRegion(
-      cursor: SystemMouseCursors.click, // Đổi con trỏ thành bàn tay khi hover
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () {
-          _selectBank(name);
-        },
+        onTap: () => _selectBank(name),
         child: Container(
           decoration: BoxDecoration(
             color: isSelected ? color.withOpacity(0.1) : Colors.transparent,
@@ -363,15 +478,14 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
               const SizedBox(height: 12),
               Text(
                 name,
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               if (isSelected) ...[
                 const SizedBox(height: 8),
-                const Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 20,
-                ),
+                const Icon(Icons.check_circle, color: Colors.green, size: 20),
               ],
             ],
           ),

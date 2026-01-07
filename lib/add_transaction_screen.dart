@@ -13,7 +13,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isExpense = true; // true = Chi tiêu, false = Thu nhập
-  final TextEditingController _amountController = TextEditingController(text: '0');
+  final TextEditingController _amountController = TextEditingController(
+    text: '0',
+  );
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _smsController = TextEditingController();
@@ -96,10 +98,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
             padding: EdgeInsets.all(16.0),
             child: Text(
               'Thêm giao dịch',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           TabBar(
@@ -137,10 +136,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
         children: [
           const Text(
             'Copy tin nhắn biến động số dư ngân hàng vào đây để AI phân tích',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
           const SizedBox(height: 16),
           Container(
@@ -168,9 +164,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
               onPressed: () {
                 // Xử lý phân tích text
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Đang phân tích tin nhắn...'),
-                  ),
+                  const SnackBar(content: Text('Đang phân tích tin nhắn...')),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -210,19 +204,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.qr_code_scanner,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
+                  Icon(Icons.qr_code_scanner, size: 64, color: Colors.grey),
                   SizedBox(height: 16),
                   Text(
                     'Hướng camera về phía mã QR\n(VietQR, Hóa đơn điện tử)',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
@@ -236,9 +223,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
               onPressed: () {
                 // Xử lý quét QR
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Đang mở camera quét QR...'),
-                  ),
+                  const SnackBar(content: Text('Đang mở camera quét QR...')),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -271,10 +256,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
           // Loại giao dịch
           const Text(
             'Loại giao dịch',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Row(
@@ -300,10 +282,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
           // Số tiền
           const Text(
             'Số tiền (VND)',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Container(
@@ -315,19 +294,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
             child: TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-              ),
+              decoration: const InputDecoration(border: InputBorder.none),
             ),
           ),
           const SizedBox(height: 24),
           // Danh mục
           const Text(
             'Danh mục',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Container(
@@ -349,10 +323,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
           // Nội dung/địa điểm
           const Text(
             'Nội dung/địa điểm',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Container(
@@ -373,10 +344,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
           // Ngày
           const Text(
             'Ngày',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           GestureDetector(
@@ -443,7 +411,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
     );
   }
 
-  Widget _buildTransactionTypeButton(String label, bool isExpenseType, Color color) {
+  Widget _buildTransactionTypeButton(
+    String label,
+    bool isExpenseType,
+    Color color,
+  ) {
     final isSelected = _isExpense == isExpenseType;
     return GestureDetector(
       onTap: () {
@@ -518,4 +490,3 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
     );
   }
 }
-

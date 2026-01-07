@@ -81,13 +81,10 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isSelected 
-                  ? color.withOpacity(0.3) 
+              color: isSelected
+                  ? color.withOpacity(0.3)
                   : color.withOpacity(0.1),
-              border: Border.all(
-                color: color, 
-                width: isSelected ? 3 : 2,
-              ),
+              border: Border.all(color: color, width: isSelected ? 3 : 2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -104,11 +101,7 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
                 ),
                 if (isSelected) ...[
                   const SizedBox(width: 8),
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 24,
-                  ),
+                  const Icon(Icons.check_circle, color: Colors.green, size: 24),
                 ],
               ],
             ),

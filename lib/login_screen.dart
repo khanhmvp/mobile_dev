@@ -40,15 +40,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.height < 700;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 20 : 24),
           child: Column(
             children: [
-              const SizedBox(height: 40),
-              Image.asset('assets/images/money_icon.png', height: 150),
+              SizedBox(height: isSmallScreen ? 20 : 40),
+              Image.asset(
+                'assets/images/money_icon.png',
+                height: isSmallScreen ? 120 : 150,
+              ),
               const SizedBox(height: 16),
               const Text(
                 'Finpal',
@@ -62,12 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text(
                 'Trợ lý tài chính thông minh của bạn',
                 style: TextStyle(fontSize: 14, color: Colors.grey),
+                textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: isSmallScreen ? 20 : 30),
               _buildTabs(),
-              const SizedBox(height: 24),
+              SizedBox(height: isSmallScreen ? 20 : 24),
               if (isLogin) ..._loginForm() else ..._registerForm(),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -187,6 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   List<Widget> _registerForm() {
     return [
+      _inputField(label: 'Họ và tên'),
+      const SizedBox(height: 16),
       _inputField(label: 'Số điện thoại'),
       const SizedBox(height: 16),
       _inputField(label: 'Mật khẩu', obscureText: true),
@@ -264,17 +273,17 @@ class _BankLinkScreenState extends State<BankLinkScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               const Text(
                 'Liên kết ngân hàng',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               const Text(
                 'Chọn ngân hàng chính của bạn để FinPal tự động đồng bộ hóa giao dịch',
                 style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,

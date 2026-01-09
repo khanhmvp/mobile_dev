@@ -41,22 +41,26 @@ class _HomeScreenState extends State<HomeScreen> {
       automaticallyImplyLeading: false,
       title: const Text(
         'FinPal',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
       ),
       actions: [
         Padding(
-          padding: EdgeInsets.only(right: width * 0.04),
+          padding: const EdgeInsets.only(right: 16),
           child: GestureDetector(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ProfileScreen()),
             ),
             child: const CircleAvatar(
-              radius: 16,
+              radius: 18,
               backgroundColor: Colors.white30,
               child: Text(
                 'HQ',
-                style: TextStyle(color: Colors.white, fontSize: 10),
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           ),
@@ -68,42 +72,32 @@ class _HomeScreenState extends State<HomeScreen> {
   // ================= OVERVIEW TAB =================
   Widget _buildOverviewTab(BuildContext context, double width, double height) {
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: height * 0.14),
+      padding: EdgeInsets.only(bottom: 80),
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(width * 0.04),
+            padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Tổng quan',
-                  style: TextStyle(
-                    fontSize: width * 0.05,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.03,
-                    vertical: height * 0.007,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      Text(
-                        '12/2025',
-                        style: TextStyle(fontSize: width * 0.035),
-                      ),
-                      SizedBox(width: width * 0.02),
-                      Icon(
-                        Icons.calendar_month,
-                        size: width * 0.045,
-                        color: Colors.grey,
-                      ),
+                      Text('12/2025', style: TextStyle(fontSize: 14)),
+                      SizedBox(width: 8),
+                      Icon(Icons.calendar_month, size: 18, color: Colors.grey),
                     ],
                   ),
                 ),
@@ -111,8 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           _buildBalanceCard(width, height),
-          SizedBox(height: height * 0.03),
-          _buildChartSection(context, width),
+          const SizedBox(height: 24),
+          _buildTransactionListSection(context, width, height),
         ],
       ),
     );
@@ -121,8 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // ================= BALANCE CARD =================
   Widget _buildBalanceCard(double width, double height) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: width * 0.04),
-      padding: EdgeInsets.all(width * 0.05),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF4285F4),
         borderRadius: BorderRadius.circular(16),
@@ -130,27 +124,27 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Tổng số dư hiện tại',
-            style: TextStyle(color: Colors.white70, fontSize: width * 0.035),
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
-          SizedBox(height: height * 0.006),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             '29,110,000 VND',
             style: TextStyle(
               color: Colors.white,
-              fontSize: width * 0.065,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: height * 0.015),
+          const SizedBox(height: 16),
           const Divider(color: Colors.white24),
-          SizedBox(height: height * 0.015),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStat('Thu', '40,000,000 VND', Colors.greenAccent, width),
-              _buildStat('Chi', '10,890,000 VND', Colors.orangeAccent, width),
+              _buildStat('Thu', '40,000,000 VND', Colors.green),
+              _buildStat('Chi', '1,890,000 VND', Colors.red),
             ],
           ),
         ],
@@ -158,23 +152,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildStat(String label, String value, Color color, double width) {
+  Widget _buildStat(String label, String value, Color color) {
     return Row(
       children: [
-        CircleAvatar(radius: 4, backgroundColor: color),
-        SizedBox(width: width * 0.02),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: TextStyle(color: Colors.white70, fontSize: width * 0.03),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
-                fontSize: width * 0.035,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -184,95 +182,103 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ================= CHART =================
-  Widget _buildChartSection(BuildContext context, double width) {
-    final chartSize = width * 0.55;
+  // ================= TRANSACTION LIST =================
+  Widget _buildTransactionListSection(
+    BuildContext context,
+    double width,
+    double height,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Chi tiết giao dịch',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildTransactionItem(
+          'Di chuyển',
+          'Grab 30/12',
+          '-55,000 VND',
+          Colors.red,
+        ),
+        _buildTransactionItem(
+          'Ăn uống',
+          'Hadilao 17/12',
+          '-1,200,000 VND',
+          Colors.red,
+        ),
+        _buildTransactionItem(
+          'Tiền lương',
+          'Công ty A 15/12',
+          '+40,000,000 VND',
+          Colors.green,
+        ),
+        _buildTransactionItem(
+          'Mua sắm',
+          'Uniqlo 13/12',
+          '-3,000,000 VND',
+          Colors.red,
+        ),
+      ],
+    );
+  }
 
+  Widget _buildTransactionItem(
+    String category,
+    String description,
+    String amount,
+    Color amountColor,
+  ) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: width * 0.04),
-      padding: EdgeInsets.all(width * 0.06),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FB),
-        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            height: chartSize,
-            child: PieChart(
-              PieChartData(
-                centerSpaceRadius: chartSize * 0.2,
-                sectionsSpace: 0,
-                sections: [
-                  PieChartSectionData(
-                    color: const Color(0xFFFF6B81),
-                    value: 45,
-                    radius: chartSize * 0.4,
-                    showTitle: false,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  category,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
-                  PieChartSectionData(
-                    color: const Color(0xFFFFD567),
-                    value: 30,
-                    radius: chartSize * 0.4,
-                    showTitle: false,
-                  ),
-                  PieChartSectionData(
-                    color: const Color(0xFF42A5F5),
-                    value: 25,
-                    radius: chartSize * 0.4,
-                    showTitle: false,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: width * 0.05),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _legendItem(const Color(0xFFFFD567), 'Mua sắm', width),
-              _legendItem(const Color(0xFF42A5F5), 'Điện nước', width),
-              _legendItem(const Color(0xFFFF6B81), 'Ăn uống', width),
-            ],
-          ),
-          SizedBox(height: width * 0.04),
-          Align(
-            alignment: Alignment.centerRight,
-            child: InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const TransactionDetailScreen(),
-                ),
-              ),
-              child: Text(
-                'Xem chi tiết',
-                style: TextStyle(
-                  fontSize: width * 0.035,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
+          Text(
+            amount,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: amountColor,
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _legendItem(Color color, String text, double width) {
-    return Row(
-      children: [
-        Container(
-          width: width * 0.03,
-          height: width * 0.01,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        SizedBox(width: width * 0.015),
-        Text(text, style: TextStyle(fontSize: width * 0.035)),
-      ],
     );
   }
 
@@ -304,10 +310,10 @@ class _HomeScreenState extends State<HomeScreen> {
               active: _currentIndex == 0,
               onTap: () => setState(() => _currentIndex = 0),
             ),
-            SizedBox(width: width * 0.15),
+            const SizedBox(width: 60),
             _bottomItem(
               icon: Icons.chat_bubble_outline,
-              label: 'Trợ lý AI',
+              label: 'Trợ lý AI',
               active: _currentIndex == 1,
               onTap: () => setState(() => _currentIndex = 1),
             ),

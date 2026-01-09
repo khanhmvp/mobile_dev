@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'add_transaction_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -9,203 +10,183 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Header với FinPal và avatar
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 50, 16, 20),
-            decoration: const BoxDecoration(color: Color(0xFF4285F4)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'FinPal',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // Header với FinPal và avatar
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+              decoration: const BoxDecoration(color: Color(0xFF4285F4)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'FinPal',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade300,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'v1.2',
+                  ),
+                  const CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Color.fromARGB(255, 84, 100, 113),
+                    child: Text(
+                      'HD',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // User Profile Section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.purple,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Người dùng FinPal',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Color.fromARGB(255, 84, 100, 113),
-                  child: Text(
-                    'VP',
-                    style: TextStyle(color: Colors.white, fontSize: 10),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // User Profile Section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: Colors.purple,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Người dùng FinPal',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                      SizedBox(height: 4),
+                      Text(
+                        'Thành viên Free',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Thành viên Free',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const Divider(height: 1),
-
-          // CÀI ĐẶT DỮ LIỆU Section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'CÀI ĐẶT DỮ LIỆU',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                    letterSpacing: 1,
+                    ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                _buildSettingItem(
-                  'Xóa dữ liệu & Reset',
-                  Icons.delete_outline,
-                  () {
-                    _showDeleteConfirmDialog(context);
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildSettingItem('Đổi API Key', Icons.vpn_key_outlined, () {
-                  _showChangeApiKeyDialog(context);
-                }),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          const Divider(height: 1),
+            const Divider(height: 1),
 
-          // THÔNG TIN ỨNG DỤNG Section
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'THÔNG TIN ỨNG DỤNG',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                    letterSpacing: 1,
+            // CÀI ĐẶT DỮ LIỆU Section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'CÀI ĐẶT DỮ LIỆU',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54,
+                      letterSpacing: 1,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                _buildInfoItem('Phiên bản', '1.2.0 (Web)'),
-                const SizedBox(height: 8),
-                _buildInfoItem('Phát triển bởi', 'FinPal Team'),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () {
-                    // Có thể mở email client hoặc copy email
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Email: support@finpal.com'),
+                  const SizedBox(height: 12),
+                  _buildSettingItem(
+                    'Xóa dữ liệu & Reset',
+                    Icons.delete_outline,
+                    () {
+                      _showDeleteConfirmDialog(context);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  _buildSettingItem('Đổi API Key', Icons.vpn_key_outlined, () {
+                    _showChangeApiKeyDialog(context);
+                  }),
+                ],
+              ),
+            ),
+
+            const Divider(height: 1),
+
+            // THÔNG TIN ỨNG DỤNG Section
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'THÔNG TIN ỨNG DỤNG',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildInfoItem('Phiên bản', '1.2.0(Web)'),
+                  const SizedBox(height: 8),
+                  _buildInfoItem('Phát triển bởi', 'Bae team'),
+                  const SizedBox(height: 8),
+                  _buildInfoItem('Liên hệ', 'Jae@finpal.com'),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // Nút Đăng xuất
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20.0,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Chuyển sang màn hình đăng nhập và xóa lịch sử điều hướng
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
                       ),
+                      (route) => false,
                     );
                   },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Liên hệ',
-                          style: TextStyle(fontSize: 14, color: Colors.black87),
-                        ),
-                        Text(
-                          'support@finpal.com',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF4285F4),
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4285F4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Đăng xuất',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
 
-          const Spacer(),
-
-          // Copyright
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              '© 2025 FinPal - Trợ lý tài chính thông minh',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ),
-
-          const SizedBox(height: 80), // Khoảng trống cho bottom bar
-        ],
+            const SizedBox(height: 80), // Khoảng trống cho bottom bar
+          ],
+        ),
       ),
 
       // Nút (+) Floating Button
@@ -372,7 +353,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Icon(Icons.chat_bubble_outline, color: Colors.grey),
                 Text(
-                  'Trợ lý AI',
+                  'Trợ lý AI',
                   style: TextStyle(color: Colors.grey, fontSize: 10),
                 ),
               ],

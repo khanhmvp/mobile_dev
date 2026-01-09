@@ -32,11 +32,12 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         children: [
           const Text(
             'Trợ lí FinPal',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 4),
           const Text(
             'Luôn theo dõi sức khỏe tài chính của bạn',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: Colors.grey, fontSize: 14),
           ),
           const SizedBox(height: 20),
 
